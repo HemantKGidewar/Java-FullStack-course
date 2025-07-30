@@ -114,6 +114,74 @@ sequenceDiagram
 
 ---
 
+# Inside the JVM: Components & Workflow
+
+This section dives into the inner workings of the JVM, from loading classes to just‑in‑time compilation.
+
+## 1. Class Loader Subsystem
+
+Responsible for finding and loading class bytecode into the JVM.
+
+```mermaid
+flowchart TB
+  subgraph "Class Loader"
+    CL1[Loading] --> CL2[Linking]
+    CL2 --> CL3[Initialization]
+  end
+```
+
+1. **Loading**: Reads `.class` files from configured class paths.
+2. **Linking**: Verifies bytecode, prepares memory, and resolves references.
+3. **Initialization**: Executes static initializers and sets default values.
+
+## 2. Bytecode Verifier
+
+Ensures security and correctness of bytecode before execution.
+
+```mermaid
+flowchart LR
+  A[Bytecode] --> B[Verifier]
+  B -->|Checks stack depths, type correctness, access rules| C[Verified Bytecode]
+```
+
+## 3. JVM Runtime Data Areas
+
+The JVM organizes memory into distinct regions:
+
+```mermaid
+flowchart LR
+    subgraph "JVM Memory"
+      MA[Method Area]
+      HE[Heap]
+      JS[JVM Stacks]
+      PC[PC Registers]
+    end
+```
+
+* **Method Area**: Stores class metadata (methods, fields).
+* **Heap**: All objects and arrays are allocated here.
+* **JVM Stacks**: Each thread gets its own stack for method calls and local variables.
+* **PC Registers**: Each thread’s program counter holds the address of the next instruction.
+
+## 4. Execution Engine & JIT Compiler
+
+The **Execution Engine** reads verified bytecode and executes it, while the **Just-In-Time (JIT) Compiler** optimizes hot code paths:
+
+```mermaid
+sequenceDiagram
+  participant JVM
+  participant JIT
+  participant CPU
+  JVM->>JIT: identify hotspot methods
+  JIT-->>JIT: compile to native code
+  JIT->>CPU: execute optimized code
+```
+
+* JVM interprets bytecode line-by-line.
+* JIT compiles frequently executed (“hotspot”) methods to machine code on the fly, improving performance.
+
+---
+
 # Java vs C++ and Other Backend Languages
 
 When choosing a backend language, Java offers several advantages over C++ and other popular options:
@@ -140,4 +208,3 @@ When choosing a backend language, Java offers several advantages over C++ and ot
 > 2. Compile with `javac` → `hello.class`
 > 3. Run on JVM → machine code
 > 4. Enjoy cross-platform compatibility, safety, and robust tooling.
-
